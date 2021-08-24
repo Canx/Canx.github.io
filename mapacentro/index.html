@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+
+
+<div id="lista-centro" class="container">
+  <h1>Mapa de centre</h1>
+  <input class="search" type="text" />
+  <ul class="list"></ul>
+</div>
+
+<div style="display:none;">
+  <li id="lista-item">
+    <h3 class="nombre"></h3>
+    <p class="desc"></p>
+  </li>
+</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.0.2/list.min.js" integrity="sha512-MT5YyrGWqMGkIbwkVUZEWGrRDjlNx8loukEdFyzLo4s8INKVxnDQy2eFcpmnWGrFwJ+X8mRTQOJpWCayXz7+Og==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+var options = {
+  item: 'lista-item'
+};
+
+var values = [];
+var listaCentro = new List('lista-centro', options);
+
+fetch('https://api.npoint.io/d513058e95049da03c1b')
+  .then(res => res.json())
+  .then((out) => {
+        out["list"].forEach(function(elemento) { 
+          values.push({ nombre: '<a href="' + elemento["url"] + '">' + elemento["nombre"] + '</a>', desc: elemento["desc"] });
+        });
+	//console.log(out["list"]);
+        //console.log(values);
+        listaCentro.add(values);
+    }
+    ).catch(err => console.error(err));
+</script>
+</html>
+      
