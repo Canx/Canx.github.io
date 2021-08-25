@@ -52,7 +52,7 @@ fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUy
             values.push({ nombre: elemento["seccion"], desc: "" });
             seccion = elemento["seccion"];
           }
-          values.push({ nombre: '<a href="' + elemento["url"] + '">' + elemento["nombre"] + '</a>', desc: elemento["desc"] });
+          values.push({ nombre: '<span style="display: none;">' + elemento["seccion"] + '</span><a href="' + elemento["url"] + '">' + elemento["nombre"] + '</a>', desc: elemento["desc"] });
         });
         listaCentro.add(values);
       })
