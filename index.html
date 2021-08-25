@@ -36,22 +36,27 @@ var options = {
 var values = [];
 var listaCentro = new List('lista-centro', options);
 
+window.googleDocCallback = function () { return true; };
+
 $('#search-field').on('keyup', function() {
   var searchString = $(this).val();
   listaCentro.search(searchString);
 });
 
-fetch('https://api.npoint.io/d513058e95049da03c1b')
-  .then(res => res.json())
+var seccion = "";
+fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUyZqNj2Bbr6-jhyp-AS7INum3PpLQcOv7WTjhQ/exec')
+  .then(res => res.json())       
   .then((out) => {
-        out["list"].forEach(function(elemento) { 
+        out["data"].forEach(function(elemento) { 
+          if (seccion != elemento["seccion"]) {
+            values.push({ nombre: elemento["seccion"], desc: "" });
+            seccion = elemento["seccion"];
+          }
           values.push({ nombre: '<a href="' + elemento["url"] + '">' + elemento["nombre"] + '</a>', desc: elemento["desc"] });
         });
-	//console.log(out["list"]);
-        //console.log(values);
         listaCentro.add(values);
-    }
-    ).catch(err => console.error(err));
+      })
+   .catch(err => console.error(err));
 </script>
 </html>
       
