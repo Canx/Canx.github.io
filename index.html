@@ -7,9 +7,15 @@
 </head>
 <body>
 
+<div class="field" style="position: sticky; top: 0px; z-index: 1">
+  <label class="label">Mapa del centre</label>
+  <div class="control">
+    <input id="search-field" class="input search" type="text" />
+  </div>
+</div>
+
 <div id="lista-centro" class="container">
-  <input class="search" type="text" style="position: sticky; top: 3px; z-index: 1"/>
-  <ul class="list"></ul>
+    <ul class="list"></ul>
 </div>
 
 <div style="display:none;">
@@ -21,6 +27,7 @@
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.0.2/list.min.js" integrity="sha512-MT5YyrGWqMGkIbwkVUZEWGrRDjlNx8loukEdFyzLo4s8INKVxnDQy2eFcpmnWGrFwJ+X8mRTQOJpWCayXz7+Og==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 var options = {
   item: 'lista-item'
@@ -28,6 +35,11 @@ var options = {
 
 var values = [];
 var listaCentro = new List('lista-centro', options);
+
+$('#search-field').on('keyup', function() {
+  var searchString = $(this).val();
+  listaCentro.search(searchString);
+});
 
 fetch('https://api.npoint.io/d513058e95049da03c1b')
   .then(res => res.json())
