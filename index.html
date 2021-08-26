@@ -4,15 +4,32 @@
 <title>Mapa del centre</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
-<div class="field" style="position: sticky; top: 0px; z-index: 1">
-  <label class="label">Mapa del centre</label>
-  <div class="control">
-    <input id="search-field" class="input search" type="text" />
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <!--<div class="navbar-brand">
+    <a class="navbar-item href="https://mestreacasa.gva.es/web/iesbenetusser">
+      <img src="https://mestreacasa.gva.es/image/layout_set_logo?img_id=500009856737&t=1629959381207" width="28" height="28">
+    </a>
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>-->
+  <div class="navbar-menu is-active">
+    <div class="navbar-item field">
+      <div class="control has-icons-right">
+        <input id="search-field" class="input search" type="text" placeholder="Cercar..."/>
+        <span class="icon is-small is-right">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+    </div>
   </div>
-</div>
+</nav>
 
 <div id="lista-centro" class="container">
     <ul class="list"></ul>
@@ -20,8 +37,8 @@
 
 <div style="display:none;">
   <li id="lista-item">
-    <h3 class="nombre"></h3>
-    <p class="desc"></p>
+      <div class="nombre"></div>
+      <div class="desc mx-6"></div>
   </li>
 </div>
 
@@ -36,6 +53,18 @@ var options = {
 var values = [];
 var listaCentro = new List('lista-centro', options);
 
+$(document).ready(function() {
+
+  // Check for click events on the navbar burger icon
+  $(".navbar-burger").click(function() {
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+
+  });
+});
+
 window.googleDocCallback = function () { return true; };
 
 $('#search-field').on('keyup', function() {
@@ -49,10 +78,10 @@ fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUy
   .then((out) => {
         out["data"].forEach(function(elemento) { 
           if (seccion != elemento["seccion"]) {
-            values.push({ nombre: elemento["seccion"], desc: "" });
+            values.push({ nombre: '<h1 class="title">' + elemento["seccion"] + '</h1>', desc: "" });
             seccion = elemento["seccion"];
           }
-          values.push({ nombre: '<span style="display: none;">' + elemento["seccion"] + '</span><a href="' + elemento["url"] + '">' + elemento["nombre"] + '</a>', desc: elemento["desc"] });
+          values.push({ nombre: '<span style="display: none;">' + elemento["seccion"] + '</span><a href="' + elemento["url"] + '" target="_blank"><h2 class="subtitle">' + elemento["nombre"] + '</h2></a>', desc: elemento["desc"] });
         });
         listaCentro.add(values);
       })
