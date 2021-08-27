@@ -59,7 +59,7 @@ var options = {
   item: function(values) {
 	  // Si aparece la sección, solo es sección
 	  if (values.seccion) {
-	    return `<h1 class="title">${values.seccion}`;
+	    return `<h1 class="title has-background-grey-light">${values.seccion}`;
 	  }
 	  var html_enlace = "";
 	  var html_desc = "";
@@ -79,7 +79,7 @@ var options = {
           }
 	  return `<li><div class="card">
 	  <header ${html_enlace} class="card-header">
-    <p class="card-header-title nombre has-background-link">
+    <p class="card-header-title nombre has-background-light">
       ${values.nombre}
     </>
   </header>
