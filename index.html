@@ -35,23 +35,59 @@
     <ul class="list"></ul>
 </div>
 
-<div style="display:none;">
-  <li id="lista-item">
+<!--<div style="display:none;">
+  <div onclick="" style="cursor: pointer;"class="card" id="lista-item">
+    <header class="card-header">
+      <p class="card-header-title nombre"></p>
+    </header>
+    <div class="card-content">
+      <div class="content desc"></div>
+    </div>
+  </div>
+</div>-->
+  <!--<li id="lista-item">
       <div class="nombre"></div>
       <div class="desc mx-6"></div>
-  </li>
-</div>
+  </li>-->
 
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.0.2/list.min.js" integrity="sha512-MT5YyrGWqMGkIbwkVUZEWGrRDjlNx8loukEdFyzLo4s8INKVxnDQy2eFcpmnWGrFwJ+X8mRTQOJpWCayXz7+Og==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js" integrity="sha512-93wYgwrIFL+b+P3RvYxi/WUFRXXUDSLCT2JQk9zhVGXuS2mHl2axj6d+R6pP+gcU5isMHRj1u0oYE/mWyt/RjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
+
 var options = {
-  item: 'lista-item'
+  item: function(values) {
+	  // Si aparece la sección, solo es sección
+	  if (values.seccion) {
+	    return `<h1 class="title">${values.seccion}`;
+	  }
+	  var html_enlace = "";
+	  var html_desc = "";
+	  // Si aparece el enlace es clickable
+	  if (values.enlace) {
+	    html_enlace = `onclick="window.open('${values.enlace}');" style="cursor: pointer;" `
+	  }
+          else {
+
+	  }
+
+	  // Si aparece la descripción la ponemos
+          if (values.desc) {
+            html_desc = `<div class="card-content">
+    <div class="content desc">${values.desc}</div>
+  </div>`
+          }
+	  return `<li><div class="card">
+	  <header ${html_enlace} class="card-header">
+    <p class="card-header-title nombre has-background-link">
+      ${values.nombre}
+    </>
+  </header>
+  ${html_desc}
+  </div></li>`;
+  }
 };
 
-var values = [];
-var listaCentro = new List('lista-centro', options);
 
 $(document).ready(function() {
 
@@ -65,27 +101,27 @@ $(document).ready(function() {
   });
 });
 
-window.googleDocCallback = function () { return true; };
+  // Add card
+var listaCentro = new List('lista-centro', options);
+var values = [];
+//values.push({ seccion: "Enlaces" });
+//values.push({ nombre: "Prueba", desc: "Esto es una prueba", enlace: "https://www.google.es" });
+//values.push({ nombre: "Caca" });
+//listaCentro.add(values);
 
 $('#search-field').on('keyup', function() {
   var searchString = $(this).val();
   listaCentro.search(searchString);
 });
 
-var seccion = "";
 fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUyZqNj2Bbr6-jhyp-AS7INum3PpLQcOv7WTjhQ/exec')
   .then(res => res.json())       
   .then((out) => {
         out["data"].forEach(function(elemento) { 
-          if (seccion != elemento["seccion"]) {
-            values.push({ nombre: '<h1 class="title">' + elemento["seccion"] + '</h1>', desc: "" });
-            seccion = elemento["seccion"];
-          }
-          values.push({ nombre: '<span style="display: none;">' + elemento["seccion"] + '</span><a href="' + elemento["url"] + '" target="_blank"><h2 class="subtitle">' + elemento["nombre"] + '</h2></a>', desc: elemento["desc"] });
-        });
+            values.push({ seccion: elemento["seccion"], nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
+          });
         listaCentro.add(values);
       })
    .catch(err => console.error(err));
 </script>
-</html>
-      
+</html> 
