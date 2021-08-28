@@ -8,75 +8,43 @@
 </head>
 <body>
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <!--<div class="navbar-brand">
-    <a class="navbar-item href="https://mestreacasa.gva.es/web/iesbenetusser">
-      <img src="https://mestreacasa.gva.es/image/layout_set_logo?img_id=500009856737&t=1629959381207" width="28" height="28">
-    </a>
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>-->
-  <div class="navbar-menu is-active">
-    <div class="navbar-item field">
-      <div class="control has-icons-right">
-        <input id="search-field" class="input search" type="text" placeholder="Cercar..."/>
-        <span class="icon is-small is-right">
-          <i class="fas fa-search"></i>
-        </span>
-      </div>
-    </div>
+<div class="container">
+  <div class="control has-icons-right mb-2 mt-2">
+    <input id="search-field" class="input search" type="text" placeholder="Cercar..."/>
+    <span class="icon is-small is-right">
+      <i class="fas fa-search"></i>
+    </span>
   </div>
-</nav>
-
+</div>
 <div id="lista-centro" class="container">
     <ul class="list"></ul>
 </div>
-
-<!--<div style="display:none;">
-  <div onclick="" style="cursor: pointer;"class="card" id="lista-item">
-    <header class="card-header">
-      <p class="card-header-title nombre"></p>
-    </header>
-    <div class="card-content">
-      <div class="content desc"></div>
-    </div>
-  </div>
-</div>-->
-  <!--<li id="lista-item">
-      <div class="nombre"></div>
-      <div class="desc mx-6"></div>
-  </li>-->
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js" integrity="sha512-93wYgwrIFL+b+P3RvYxi/WUFRXXUDSLCT2JQk9zhVGXuS2mHl2axj6d+R6pP+gcU5isMHRj1u0oYE/mWyt/RjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 
+var seccion = "";
 var options = {
   item: function(values) {
 	  // Si aparece la sección, solo es sección
 	  if (values.seccion) {
-	    return `<h1 class="title has-background-grey-light">${values.seccion}`;
+	    seccion = values.seccion;
+            return `<h1 class="title has-background-grey-light mb-0 has-text-centered">${values.seccion}</h1>`;
 	  }
+	  
 	  var html_enlace = "";
 	  var html_desc = "";
 	  // Si aparece el enlace es clickable
 	  if (values.enlace) {
 	    html_enlace = `onclick="window.open('${values.enlace}');" style="cursor: pointer;" `
 	  }
-          else {
-
-	  }
 
 	  // Si aparece la descripción la ponemos
-          if (values.desc) {
-            html_desc = `<div class="card-content">
-    <div class="content desc">${values.desc}</div>
-  </div>`
-          }
+          if (values.desc) { html_desc = `<div class="card-content"><div class="content desc">${values.desc}</div></div>` }
+
+	  // En todos los casos
 	  return `<li><div class="card">
 	  <header ${html_enlace} class="card-header">
     <p class="card-header-title nombre has-background-light">
@@ -104,10 +72,6 @@ $(document).ready(function() {
   // Add card
 var listaCentro = new List('lista-centro', options);
 var values = [];
-//values.push({ seccion: "Enlaces" });
-//values.push({ nombre: "Prueba", desc: "Esto es una prueba", enlace: "https://www.google.es" });
-//values.push({ nombre: "Caca" });
-//listaCentro.add(values);
 
 $('#search-field').on('keyup', function() {
   var searchString = $(this).val();
