@@ -17,7 +17,10 @@
   </div>
 </div>
 <div id="lista-centro" class="container">
-    <ul class="list"></ul>
+   <div id="loader" class="container has-text-centered">
+    <button class="button is-ghost is-large is-ghost is-loading">Carregant...</button>
+   </div>
+   <ul class="list"></ul>
 </div>
 
 </body>
@@ -84,6 +87,7 @@ fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUy
         out["data"].forEach(function(elemento) { 
             values.push({ seccion: elemento["seccion"], nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
           });
+	$("#loader").remove();
         listaCentro.add(values);
       })
    .catch(err => console.error(err));
