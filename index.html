@@ -10,7 +10,7 @@
 
 <div class="container">
   <div class="control has-icons-right m-2">
-    <input id="search-field" class="input search" type="text" placeholder="Cercar..."/>
+    <input id="search-field" class="input fuzzy-search" type="text" placeholder="Cercar..."/>
     <span class="icon is-small is-right">
       <i class="fas fa-search"></i>
     </span>
@@ -20,7 +20,7 @@
    <div id="loader" class="container has-text-centered">
     <button class="button is-ghost is-large is-ghost is-loading">Carregant...</button>
    </div>
-   <ul class="list"></ul>
+   <div class="list"></div>
 </div>
 
 </body>
@@ -32,9 +32,9 @@ var seccion = "";
 var options = {
   item: function(values) {
 	  // Si aparece la sección, solo es sección
-	  if (values.seccion) {
+	  if (values.seccion && !values.nombre) {
 	    seccion = values.seccion;
-            return `<h1 class="title has-background-info has-text-white mb-0 has-text-centered">${values.seccion}</h1>`;
+              return `<h1 class="title has-background-info has-text-white mb-0 has-text-centered">${values.seccion}</h1>`;
 	  }
 	  
 	  var html_enlace = "";
@@ -45,17 +45,17 @@ var options = {
 	  }
 
 	  // Si aparece la descripción la ponemos
-          if (values.desc) { html_desc = `<div class="card-content"><div class="content desc">${values.desc}</div></div>` }
+	  if (values.desc) { html_desc = `<div class="card-content"><div class="content"><span class="desc">${values.desc}</span></div></div>` }
 
 	  // En todos los casos
-	  return `<li><div class="card">
+	  return `<div class="card">
 	  <header ${html_enlace} class="card-header">
-    <p class="card-header-title nombre has-background-link-light">
-      ${values.nombre}
-    </>
+    <p class="card-header-title has-background-link-light">
+      <span class="seccion is-hidden">${seccion}</span><span class="nombre">${values.nombre}</span>
+    </p>
   </header>
-  ${html_desc}
-  </div></li>`;
+    ${html_desc}
+</div>`;
   }
 };
 
@@ -84,8 +84,12 @@ $('#search-field').on('keyup', function() {
 fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUyZqNj2Bbr6-jhyp-AS7INum3PpLQcOv7WTjhQ/exec')
   .then(res => res.json())       
   .then((out) => {
+	var seccion_data = "";
         out["data"].forEach(function(elemento) { 
-            values.push({ seccion: elemento["seccion"], nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
+	    if(elemento["seccion"]) {
+	      seccion_data = elemento["seccion"];
+	    }
+            values.push({ seccion: seccion_data, nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
           });
 	$("#loader").remove();
         listaCentro.add(values);
