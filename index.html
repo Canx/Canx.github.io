@@ -8,13 +8,15 @@
 </head>
 <body>
 
-<div class="container">
+<div id="cabecera" class="container">
   <div class="control has-icons-right m-2">
     <input id="search-field" class="input fuzzy-search" type="text" placeholder="Cercar..."/>
     <span class="icon is-small is-right">
       <i class="fas fa-search"></i>
     </span>
   </div>
+</div>
+<div id="favoritos" class="container">
 </div>
 <div id="lista-centro" class="container">
    <div id="loader" class="container has-text-centered">
@@ -29,12 +31,16 @@
 <script>
 
 var seccion = "";
+var secciones = [];
+var num_seccion = 0;
 var options = {
   item: function(values) {
 	  // Si aparece la sección, solo es sección
 	  if (values.seccion && !values.nombre) {
-	    seccion = values.seccion;
-              return `<h1 class="title has-background-info has-text-white mb-0 has-text-centered">${values.seccion}</h1>`;
+	      seccion = values.seccion;
+              secciones.push(seccion);
+              num_seccion++;
+              return `<h1 id="cat${num_seccion}" class="title has-background-info has-text-white mb-0 has-text-centered">${values.seccion}</h1>`;
 	  }
 	  
 	  var html_enlace = "";
