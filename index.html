@@ -30,14 +30,57 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 
+function getFavs() {
+  var favoritos = [];
+  if (localStorage.hasOwnProperty("favoritos")) {
+    favoritos = JSON.parse(localStorage.getItem("favoritos"));
+  }
+  if (!Array.isArray(favoritos)) {
+    favoritos = [];
+  }
+  return favoritos;
+}
+
+function addFav(n) {
+  var favoritos = getFavs();
+
+  if (favoritos.indexOf(`${n}`) == -1) {
+    favoritos.push(n);
+    localStorage.setItem("favoritos",JSON.stringify(favoritos));
+  }
+}
+
+function isFav(n) {
+  return getFavs().includes(`${n}`);
+}
+
+function claseFav(n) {
+  if (isFav(n)) {
+    return "fas";
+  }
+  else {
+    return "far";
+  }
+}
+
+function removeFav(n) {
+  // Quitar de localStorage
+  if (isFav(n)) {
+    var favoritos = getFavs();
+    var index = favoritos.indexOf(`${n}`);
+    if (index !== -1) {
+      favoritos.splice(index, 1);
+      localStorage.setItem("favoritos",JSON.stringify(favoritos));
+    }
+  }
+}
+
 var seccion = "";
 var secciones = [];
 var num_seccion = 0;
 var options = {
-  item: function(values) {
-	  // Si aparece la sección, solo es sección
-	  if (values.seccion && !values.nombre) {
-	      seccion = values.seccion;
+  item: function(values) { // Si aparece la sección, solo es sección 
+          if (values.seccion && !values.nombre) { seccion = values.seccion;
               secciones.push(seccion);
               num_seccion++;
               return `<h1 id="cat${num_seccion}" class="title has-background-info has-text-white mb-0 has-text-centered">${values.seccion}</h1>`;
@@ -53,12 +96,14 @@ var options = {
 	  // Si aparece la descripción la ponemos
 	  if (values.desc) { html_desc = `<div class="card-content"><div class="content"><span class="desc">${values.desc}</span></div></div>` }
 
+
 	  // En todos los casos
 	  return `<div class="card">
-	  <header ${html_enlace} class="card-header">
-    <p class="card-header-title has-background-link-light">
-      <span class="seccion is-hidden">${seccion}</span><span class="nombre">${values.nombre}</span>
-    </p>
+  <header id="${values.id}" class="card-header has-background-link-light level-item">
+    <span ${html_enlace} class="card-header-title nombre">${values.nombre}</span>
+    <button class="favorito button is-link is-light">
+      <span class="icon"><i id="${values.id}" class="${claseFav(values.id)} fa-heart has-text-danger"></i></span>
+    </button>
   </header>
     ${html_desc}
 </div>`;
@@ -66,26 +111,53 @@ var options = {
 };
 
 
-$(document).ready(function() {
+///// MAIN //////
 
-  // Check for click events on the navbar burger icon
-  $(".navbar-burger").click(function() {
+// TODO: favoritos debería guardarse como hash, no como índice
 
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      $(".navbar-burger").toggleClass("is-active");
-      $(".navbar-menu").toggleClass("is-active");
-
-  });
-});
-
-  // Add card
 var listaCentro = new List('lista-centro', options);
 var values = [];
+var id_number = 0;
 
 $('#search-field').on('keyup', function() {
   var searchString = $(this).val();
   listaCentro.search(searchString);
 });
+
+$(document).on('click', '.favorito', function(event) {
+  var icon = $(event.target);
+  if (!icon.is("i") ) {
+     icon=icon.find("i");
+  }
+  
+  id = icon.attr('id');
+  //$(`#${id}.fa-heart`).toggleClass("fas far");
+  if (icon.hasClass("far")) {
+    icon.toggleClass("far fas");
+    addFav(id);
+    cargarFavoritos(values);
+  }
+  else {
+    //icon.toggleClass("fas far");
+    removeFav(id);
+    cargarFavoritos(values);
+    $(`#${id}.fa-heart`).toggleClass("fas far");
+    //$(`#${id}.fa-heart`).addClass("far");
+
+  }
+});
+
+function cargarFavoritos(lista) {
+  var favoritos = getFavs();
+
+  $("#favoritos").empty();
+  if (favoritos.length > 0) {
+    $("#favoritos").append("<h1 class='title has-background-info has-text-white mb-0 has-text-centered'>FAVORITS</h1>");
+    favoritos.forEach(function(id) {
+      $("#favoritos").append(options.item(lista[id]));
+    });
+  }
+}
 
 fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUyZqNj2Bbr6-jhyp-AS7INum3PpLQcOv7WTjhQ/exec')
   .then(res => res.json())       
@@ -95,9 +167,11 @@ fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUy
 	    if(elemento["seccion"]) {
 	      seccion_data = elemento["seccion"];
 	    }
-            values.push({ seccion: seccion_data, nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
+            values.push({ id: id_number, seccion: seccion_data, nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
+            id_number++;
           });
 	$("#loader").remove();
+        cargarFavoritos(values);
         listaCentro.add(values);
       })
    .catch(err => console.error(err));
