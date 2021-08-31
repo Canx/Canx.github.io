@@ -30,6 +30,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
 function getFavs() {
   var favoritos = [];
   if (localStorage.hasOwnProperty("favoritos")) {
@@ -80,6 +91,8 @@ var secciones = [];
 var num_seccion = 0;
 var options = {
   item: function(values) { // Si aparece la sección, solo es sección 
+          if (!values) return "";
+
           if (values.seccion && !values.nombre) { seccion = values.seccion;
               secciones.push(seccion);
               num_seccion++;
@@ -117,7 +130,6 @@ var options = {
 
 var listaCentro = new List('lista-centro', options);
 var values = [];
-var id_number = 0;
 
 $('#search-field').on('keyup', function() {
   var searchString = $(this).val();
@@ -154,7 +166,9 @@ function cargarFavoritos(lista) {
   if (favoritos.length > 0) {
     $("#favoritos").append("<h1 class='title has-background-info has-text-white mb-0 has-text-centered'>FAVORITS</h1>");
     favoritos.forEach(function(id) {
-      $("#favoritos").append(options.item(lista[id]));
+      //1040501038$("#favoritos").append(options.item(listaCentro.get("id", id)));
+      $("#favoritos").append(options.item(values.find((element) => element.id == id)));
+      
     });
   }
 }
@@ -167,8 +181,7 @@ fetch('https://script.google.com/macros/s/AKfycbzluh_D_hAvkd2tGMcD9n8PQNaJ7MZSUy
 	    if(elemento["seccion"]) {
 	      seccion_data = elemento["seccion"];
 	    }
-            values.push({ id: id_number, seccion: seccion_data, nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
-            id_number++;
+            values.push({ id: elemento["enlace"].hashCode(), seccion: seccion_data, nombre: elemento["nombre"], desc: elemento["desc"], enlace: elemento["enlace"] });
           });
 	$("#loader").remove();
         cargarFavoritos(values);
